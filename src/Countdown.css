@@ -1,0 +1,109 @@
+/* General body styling */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+/* Main container for the countdown screen */
+.countdown-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  width: 100vw;
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+/* Header section */
+.countdown-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.countdown-header .logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.countdown-header .header-logo {
+    width: 30px;
+    height: auto;
+}
+
+.countdown-header .logo-placeholder span {
+    font-size: 28px;
+    font-weight: 700;
+    color: #D6334B;
+}
+
+/* Main content area */
+.countdown-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* The circular timer display */
+.timer-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #F87A87 0%, #D6334B 100%);
+  border: 8px solid #FAD1D6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(214, 51, 75, 0.3);
+}
+
+.timer-count {
+  font-size: 96px;
+  font-weight: 300;
+  color: #ffffff;
+}
+
+.countdown-text {
+  font-size: 18px;
+  color: #555;
+  margin: 0;
+}
+
+/* Footer section */
+.countdown-footer {
+  width: 100%;
+  padding-bottom: 1rem;
+}
+
+.skip-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: #ED818F;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.skip-btn:hover {
+  background-color: #D6334B;
+}

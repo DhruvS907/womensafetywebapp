@@ -1,0 +1,167 @@
+/* General body styling */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f0f0; /* A light grey background for the page */
+}
+
+/* Main container for the scheduler screen */
+.scheduler-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  max-width: 400px; /* Typical mobile screen width */
+  margin: 0 auto;
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+/* Header section */
+.scheduler-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.scheduler-header .logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.scheduler-header .header-logo {
+    width: 30px;
+    height: auto;
+}
+
+.scheduler-header .logo-placeholder span {
+    font-size: 28px;
+    font-weight: 700;
+    color: #D6334B;
+}
+
+.scheduler-header h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.scheduler-header p {
+  font-size: 16px;
+  color: #888;
+  margin: 0;
+}
+
+/* Main content section */
+.scheduler-main {
+  flex-grow: 1;
+}
+
+.caller-details, .schedule-timer {
+  margin-bottom: 1.5rem;
+}
+
+.caller-details label, .schedule-timer label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #D6334B;
+  background-color: #fff;
+}
+
+.input-group .phone-icon {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  color: #D6334B;
+}
+
+/* Time options buttons */
+.time-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.time-btn {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.time-btn.active {
+  background-color: #D6334B;
+  color: #fff;
+  border-color: #D6334B;
+}
+
+/* Secure notice section */
+.secure-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #f0f8ff;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #555;
+}
+
+.secure-notice .checkbox-icon {
+    color: #32cd32; /* A green color for the checkmark */
+}
+
+/* Footer and schedule button */
+.scheduler-footer {
+  padding-top: 1rem;
+}
+
+.schedule-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: #ED818F;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.schedule-btn:hover {
+  background-color: #D6334B;
+}
