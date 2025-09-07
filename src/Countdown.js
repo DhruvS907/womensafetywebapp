@@ -33,7 +33,7 @@ const Countdown = ({ countdownFrom = 5, onFinish, onSkip }) => {
     <div className="countdown-container">
       <header className="countdown-header">
         <div className="logo-placeholder">
-            <img src="/assets/Logo.png" alt="SafeHer Logo" className="header-logo"/>
+            <img src="/assets/logo.png" alt="SafeHer Logo" className="header-logo"/>
             <span>SafeHer</span>
         </div>
       </header>
