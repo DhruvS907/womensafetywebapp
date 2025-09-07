@@ -46,7 +46,7 @@ const CallEnded = ({ duration = 0, onNewCall }) => {
             <footer className="call-ended-footer">
                 <p className="footer-message">We Hope you are feeling safe now!</p>
                 <div className="footer-logo">
-                    <img src="/assets/Logo.png" alt="SafeHer Logo" className="footer-logo-img" />
+                    <img src="/assets/logo.png" alt="SafeHer Logo" className="footer-logo-img" />
                     <span>SafeHer</span>
                 </div>
                 <p className="footer-subtitle">Your AI-powered guardian angel</p>
