@@ -1,21 +1,15 @@
-// src/FakeCallWindow.js
 import React, { useEffect, useState, useRef } from "react";
-import "./FakeCallWindow.css";
+import { useParams } from "react-router-dom";
+import './FakeCallWindow.css';
 
-/**
- * FakeCallWindow with Phone-like UI that works with existing convao-tools.js
- * The convao-tools.js creates its own widget, so we just need to trigger it
- */
-const FakeCallWindow = ({ callerName = "Dad", onEndCall }) => {
+const FakeCallWindow = ({ callerName: propCallerName = "Dad", onEndCall, agentId, autoStart=false }) => {
+  const params = useParams();
+  const callerNameFromUrl = params?.callerName ? decodeURIComponent(params.callerName) : null;
+  const callerName = callerNameFromUrl || propCallerName || "Dad";
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [isConversationActive, setIsConversationActive] = useState(true);
   const [callSeconds, setCallSeconds] = useState(0);
-  const [showConvAI, setShowConvAI] = useState(true);
-
-  const scriptLoadedRef = useRef(false);
-  const scriptId = "conva-tools-loader-script";
-  const CONVAO_SRC = "/convao-tools.js";
 
   // Timer logic
   useEffect(() => {
@@ -26,179 +20,6 @@ const FakeCallWindow = ({ callerName = "Dad", onEndCall }) => {
     return () => clearInterval(timer);
   }, [isConversationActive]);
 
-  // Small poll helper
-  const waitFor = (predicate, interval = 200, timeout = 4000) =>
-    new Promise((resolve, reject) => {
-      const start = Date.now();
-      (function poll() {
-        try {
-          if (predicate()) return resolve(true);
-        } catch (e) {}
-        if (Date.now() - start > timeout) return reject(new Error("timeout"));
-        setTimeout(poll, interval);
-      })();
-    });
-
-  // Try to start the widget that convao-tools.js created
-  const tryStartWidgetProgrammatically = async () => {
-    console.debug("[FakeCallWindow] attempt programmatic start");
-
-    // 1) Use the convaiTools API from your script
-    try {
-      if (window.convaiTools && typeof window.convaiTools.start === "function") {
-        console.debug("[FakeCallWindow] calling window.convaiTools.start()");
-        window.convaiTools.start();
-        return true;
-      }
-    } catch (err) {
-      console.warn("[FakeCallWindow] window.convaiTools.start() threw:", err);
-    }
-
-    // 2) Try to find the elevenlabs-convai element your script created
-    try {
-      await waitFor(() => !!document.querySelector("elevenlabs-convai"), 250, 6000);
-      const widgetEl = document.querySelector("elevenlabs-convai");
-      if (widgetEl) {
-        console.debug("[FakeCallWindow] found widget element:", widgetEl);
-        
-        // Try common API method names
-        for (const method of ["start", "open", "connect", "init", "activate"]) {
-          if (typeof widgetEl[method] === "function") {
-            try {
-              console.debug(`[FakeCallWindow] calling widgetEl.${method}()`);
-              widgetEl[method]();
-              return true;
-            } catch (err) {
-              console.warn(`[FakeCallWindow] widgetEl.${method}() threw:`, err);
-            }
-          }
-        }
-
-        // Try clicking the widget if it has clickable elements
-        const clickableEl = widgetEl.querySelector('button, [role="button"], .clickable');
-        if (clickableEl) {
-          try {
-            console.debug("[FakeCallWindow] clicking widget element:", clickableEl);
-            clickableEl.click();
-            return true;
-          } catch (err) {
-            console.warn("[FakeCallWindow] clicking widget element failed:", err);
-          }
-        }
-      }
-    } catch (err) {
-      console.debug("[FakeCallWindow] widget element not ready within timeout:", err);
-    }
-
-    // 3) Dispatch custom events to trigger widget
-    try {
-      console.debug("[FakeCallWindow] dispatching convai:start-call event");
-      window.dispatchEvent(new CustomEvent("convai:start-call"));
-      return true;
-    } catch (err) {
-      console.warn("[FakeCallWindow] custom event dispatch failed:", err);
-    }
-
-    console.warn("[FakeCallWindow] could not start widget programmatically.");
-    return false;
-  };
-
-  // Load convao-tools.js and initialize widget
-  useEffect(() => {
-    if (!showConvAI) {
-      // Hide the widget when showConvAI is false
-      const existingWidget = document.querySelector('.convai-widget');
-      if (existingWidget) {
-        existingWidget.style.display = 'none';
-      }
-      return;
-    }
-
-    // Show the widget when showConvAI is true
-    const existingWidget = document.querySelector('.convai-widget');
-    if (existingWidget) {
-      existingWidget.style.display = 'block';
-    }
-
-    console.log("[FakeCallWindow] ConvAI effect triggered, showConvAI:", showConvAI);
-
-    // Avoid injecting script multiple times
-    if (scriptLoadedRef.current || document.getElementById(scriptId) || window.__CONVAI_WIDGET_LOADED__) {
-      scriptLoadedRef.current = true;
-      console.log("[FakeCallWindow] Script already loaded, attempting start...");
-      
-      (async () => {
-        try {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const started = await tryStartWidgetProgrammatically();
-          console.debug("[FakeCallWindow] tryStart after already-loaded script returned:", started);
-        } catch (err) {
-          console.warn("[FakeCallWindow] tryStart after already-loaded script error:", err);
-        }
-      })();
-      return;
-    }
-
-    console.log("[FakeCallWindow] Loading ConvAI script...");
-
-    // Set runtime config for your convao-tools.js
-    window.CONVAI_CONFIG = window.CONVAI_CONFIG || {};
-    window.CONVAI_CONFIG.agentId = window.CONVAI_CONFIG.agentId || 'agent_2801k4c88aaffanv3kvjc8sksxrm';
-    window.CONVAI_CONFIG.widgetPosition = 'bottom-right';
-    window.CONVAI_CONFIG.openInNewTab = true;
-
-    // Create script tag
-    const s = document.createElement("script");
-    s.id = scriptId;
-    s.src = CONVAO_SRC;
-    s.async = true;
-
-    s.onload = async () => {
-      console.log("[FakeCallWindow] convao-tools.js loaded successfully");
-      scriptLoadedRef.current = true;
-
-      // Give time for the widget to be created and attached to DOM
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      try {
-        const started = await tryStartWidgetProgrammatically();
-        console.debug("[FakeCallWindow] attempted start after load ->", started);
-        
-        if (started) {
-          console.log("[FakeCallWindow] ✅ ConvAI widget started successfully!");
-        } else {
-          console.warn("[FakeCallWindow] ❌ Failed to start ConvAI widget");
-          
-          // Log what widgets are available
-          const widgets = document.querySelectorAll('elevenlabs-convai');
-          console.log("[FakeCallWindow] Available elevenlabs-convai elements:", widgets);
-        }
-      } catch (err) {
-        console.warn("[FakeCallWindow] error while trying to start widget:", err);
-      }
-    };
-
-    s.onerror = (e) => {
-      console.error("[FakeCallWindow] failed to load convao-tools.js", e);
-      console.error("[FakeCallWindow] Make sure the file exists at:", CONVAO_SRC);
-    };
-
-    document.head.appendChild(s);
-
-    // Cleanup on unmount
-    return () => {
-      console.log("[FakeCallWindow] Cleaning up ConvAI...");
-      const el = document.getElementById(scriptId);
-      if (el) el.remove();
-
-      // Remove the widget wrapper that convao-tools.js created
-      const widgetWrappers = document.querySelectorAll('.convai-widget');
-      widgetWrappers.forEach((wrapper) => wrapper && wrapper.remove());
-
-      scriptLoadedRef.current = false;
-    };
-  }, [showConvAI]);
-
   const formatTime = (seconds) => {
     const mm = Math.floor(seconds / 60).toString().padStart(2, "0");
     const ss = (seconds % 60).toString().padStart(2, "0");
@@ -207,19 +28,6 @@ const FakeCallWindow = ({ callerName = "Dad", onEndCall }) => {
 
   const handleEndCallClick = () => {
     setIsConversationActive(false);
-    setShowConvAI(false);
-
-    // Use convaiTools.end() from your script
-    try {
-      if (window.convaiTools && typeof window.convaiTools.end === "function") {
-        window.convaiTools.end();
-      } else {
-        window.dispatchEvent(new CustomEvent("convai:end-call"));
-      }
-    } catch (err) {
-      console.warn("Widget end instruction failed:", err);
-    }
-
     if (typeof onEndCall === "function") {
       try {
         onEndCall();
@@ -228,6 +36,17 @@ const FakeCallWindow = ({ callerName = "Dad", onEndCall }) => {
       }
     }
   };
+
+  // load Convai script visibly
+  useEffect(() => {
+    if (!document.getElementById("convai-tools-loader")) {
+      const s = document.createElement("script");
+      s.id = "convai-tools-loader";
+      s.src = "/convao-tools.js";
+      s.async = true;
+      document.body.appendChild(s);
+    }
+  }, []);
 
   // Phone call action icons (SVG components)
   const MuteIcon = () => (
@@ -249,13 +68,17 @@ const FakeCallWindow = ({ callerName = "Dad", onEndCall }) => {
     </svg>
   );
 
-  const AIAssistantIcon = () => (
+  const KeypadIcon = () => (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 8V4H8"></path>
-      <rect x="2" y="8" width="20" height="12" rx="2"></rect>
-      <path d="M6 16h12"></path>
-      <circle cx="9" cy="12" r="1"></circle>
-      <circle cx="15" cy="12" r="1"></circle>
+      <circle cx="6" cy="6" r="1" />
+      <circle cx="12" cy="6" r="1" />
+      <circle cx="18" cy="6" r="1" />
+      <circle cx="6" cy="12" r="1" />
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="18" cy="12" r="1" />
+      <circle cx="6" cy="18" r="1" />
+      <circle cx="12" cy="18" r="1" />
+      <circle cx="18" cy="18" r="1" />
     </svg>
   );
 
@@ -314,8 +137,8 @@ const FakeCallWindow = ({ callerName = "Dad", onEndCall }) => {
       <div className="caller-info">
         <h1 className="caller-name">{callerName}</h1>
         <div className="call-timer">{formatTime(callSeconds)}</div>
-        {isConversationActive && showConvAI && (
-          <div className="conversation-status">AI Assistant Active</div>
+        {isConversationActive && (
+          <div className="conversation-status">Connected</div>
         )}
       </div>
 
@@ -335,13 +158,12 @@ const FakeCallWindow = ({ callerName = "Dad", onEndCall }) => {
           
           <div className="action-item">
             <button 
-              className={`icon-bg ${showConvAI ? 'active' : ''}`}
-              onClick={() => setShowConvAI(!showConvAI)}
+              className="icon-bg"
               aria-label="Keypad"
             >
-              <AIAssistantIcon />
+              <KeypadIcon />
             </button>
-            <p>AI assist</p>
+            <p>keypad</p>
           </div>
           
           <div className="action-item">

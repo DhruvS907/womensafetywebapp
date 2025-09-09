@@ -1,5 +1,6 @@
 // src/App.js
 import React, { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import SplashScreen from "./SplashScreen";
 import EnterFakeCall from "./EnterFakeCall";
 import Countdown from "./Countdown";
@@ -21,7 +22,9 @@ export default function App() {
   const [lastCallDuration, setLastCallDuration] = useState(0);
 
   // Replace with your real agent id or keep empty and set window.CONVAI_CONFIG elsewhere
-  const AGENT_ID = "your_real_elevenlabs_agent_id_here";
+  const AGENT_ID = "agent_2801k4c88aaffanv3kvjc8sksxrm";
+
+  const navigate = useNavigate();
 
   // Splash -> Enter (after 2s)
   function onSplashTimeout() {
@@ -60,30 +63,81 @@ export default function App() {
     setFlow("enter");
   }
 
+  // Helper to navigate direct to deep link for a caller (optional UI usage)
+  function openDeepLinkForCaller(name) {
+    // encode name for URL
+    const encoded = encodeURIComponent(name || "Dad");
+    navigate(`/call/${encoded}`);
+  }
+
+  // The default SPA behavior (old flow) is preserved.
+  // We'll also declare Routes so that direct visits to /call/:callerName work.
   return (
-    <div className="app-root">
-      {flow === "splash" && <SplashScreen onTimeout={onSplashTimeout} />}
+    <Routes>
+      {/* Root route renders the SPA flow UI (same as before) */}
+      <Route
+        path="/"
+        element={
+          <div className="app-root">
+            {flow === "splash" && <SplashScreen onTimeout={onSplashTimeout} />}
 
-      {flow === "enter" && <EnterFakeCall onSchedule={onSchedule} />}
+            {flow === "enter" && <EnterFakeCall onSchedule={(timeLabel, name) => { onSchedule(timeLabel, name); /* optional: we could also direct to deep link here */ }} />}
 
-      {flow === "count" && (
-        <Countdown
-          countdownFrom={scheduledSecs}
-          onFinish={onCountdownFinish}
-          onSkip={onCountdownFinish}
-        />
-      )}
+            {flow === "count" && (
+              <Countdown
+                countdownFrom={scheduledSecs}
+                onFinish={onCountdownFinish}
+                onSkip={onCountdownFinish}
+              />
+            )}
 
-      {flow === "call" && (
-        <FakeCallWindow
-          callerName={callerName}
-          agentId={AGENT_ID}
-          autoStart={true}
-          onEndCall={onCallEnd}
-        />
-      )}
+            {flow === "call" && (
+              <FakeCallWindow
+                callerName={callerName}
+                agentId={AGENT_ID}
+                autoStart={true}
+                onEndCall={onCallEnd}
+              />
+            )}
 
-      {flow === "ended" && <CallEndedBackground duration={lastCallDuration} onNewCall={onStartNewCall} />}
-    </div>
+            {flow === "ended" && <CallEndedBackground duration={lastCallDuration} onNewCall={onStartNewCall} />}
+          </div>
+        }
+      />
+
+      {/* Deep link route: direct visit to /call/:callerName */}
+      <Route
+        path="/call/:callerName"
+        element={<FakeCallWindow agentId={AGENT_ID} autoStart={true} onEndCall={onCallEnd} />}
+      />
+
+      {/* Fallback: render root flow for anything else */}
+      <Route path="*" element={
+        <div className="app-root">
+          {flow === "splash" && <SplashScreen onTimeout={onSplashTimeout} />}
+
+          {flow === "enter" && <EnterFakeCall onSchedule={(timeLabel, name) => onSchedule(timeLabel, name)} />}
+
+          {flow === "count" && (
+            <Countdown
+              countdownFrom={scheduledSecs}
+              onFinish={onCountdownFinish}
+              onSkip={onCountdownFinish}
+            />
+          )}
+
+          {flow === "call" && (
+            <FakeCallWindow
+              callerName={callerName}
+              agentId={AGENT_ID}
+              autoStart={true}
+              onEndCall={onCallEnd}
+            />
+          )}
+
+          {flow === "ended" && <CallEndedBackground duration={lastCallDuration} onNewCall={onStartNewCall} />}
+        </div>
+      } />
+    </Routes>
   );
 }

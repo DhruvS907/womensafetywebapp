@@ -75,14 +75,14 @@
 }
 
 .conversation-status {
-  color: #30D158; /* iOS green */
+  color: #ffffff; /* iOS green */
   font-size: 16px;
   margin-top: 12px;
   font-weight: 500;
-  background: rgba(48, 209, 88, 0.1);
+  background: #1C1C1E;
   padding: 6px 16px;
   border-radius: 20px;
-  border: 1px solid rgba(48, 209, 88, 0.3);
+  border: 1px solid #1C1C1E;
 }
 
 /* Container for all action buttons */
