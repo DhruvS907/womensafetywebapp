@@ -89,12 +89,12 @@ body, html {
   flex-shrink: 0;
 }
 
-.next-btn {
+.onboarding-footer-2 .next-btn {
   width: 100%;
   padding: 16px;
   border-radius: 25px;
   border: none;
-  background-color: #ED818F;
+  background-color: #D6334B; /* 🔴 Red by default */
   color: #fff;
   font-size: 18px;
   font-weight: 600;
@@ -104,9 +104,10 @@ body, html {
   text-align: center;
 }
 
-.next-btn:hover {
-  background-color: #D6334B; /* Darker shade on hover */
+.onboarding-footer-2 .next-btn:hover {
+  background-color: #b22639;
 }
+
 
 .next-btn .page-indicator {
   position: absolute;

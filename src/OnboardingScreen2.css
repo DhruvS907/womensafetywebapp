@@ -79,12 +79,12 @@
 }
 
 /* Reusing button styles */
-.onboarding-footer-2 .next-btn {
+.next-btn {
   width: 100%;
   padding: 16px;
   border-radius: 25px;
   border: none;
-  background-color: #ED818F;
+  background-color: #D6334B; /* 🔴 Red by default */
   color: #fff;
   font-size: 18px;
   font-weight: 600;
@@ -94,9 +94,10 @@
   text-align: center;
 }
 
-.onboarding-footer-2 .next-btn:hover {
-  background-color: #D6334B;
+.next-btn:hover {
+  background-color: #b22639;
 }
+
 
 .onboarding-footer-2 .next-btn .page-indicator {
   position: absolute;
