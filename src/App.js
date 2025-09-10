@@ -2,39 +2,52 @@
 import React, { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import SplashScreen from "./SplashScreen";
+import OnboardingScreen from "./OnboardingScreen";
+import OnboardingScreen2 from "./OnboardingScreen2";
 import EnterFakeCall from "./EnterFakeCall";
 import Countdown from "./Countdown";
 import FakeCallWindow from "./FakeCallWindow";
 import CallEndedBackground from "./CallEndedBackground";
 
+// Importing all the necessary CSS files
 import "./App.css";
 import "./SplashScreen.css";
+import "./OnboardingScreen.css";
+import "./OnboardingScreen2.css";
 import "./EnterFakeCall.css";
 import "./Countdown.css";
 import "./FakeCallWindow.css";
 import "./CallEndedBackground.css";
 
 export default function App() {
-  // flow: 'splash' -> 'enter' -> 'count' -> 'call' -> 'ended'
+  // The 'flow' state manages which component is currently displayed
   const [flow, setFlow] = useState("splash");
   const [scheduledSecs, setScheduledSecs] = useState(5);
   const [callerName, setCallerName] = useState("Dad");
   const [lastCallDuration, setLastCallDuration] = useState(0);
 
-  // Replace with your real agent id or keep empty and set window.CONVAI_CONFIG elsewhere
-  const AGENT_ID = "agent_2801k4c88aaffanv3kvjc8sksxrm";
+  // Replace with your real agent id or handle it as needed
+  const AGENT_ID = "agent_placeholder_id";
 
   const navigate = useNavigate();
 
-  // Splash -> Enter (after 2s)
+  // Handler to move from Splash to the first Onboarding screen
   function onSplashTimeout() {
+    setFlow("onboarding");
+  }
+
+  // Handler to move from the first to the second Onboarding screen
+  function onOnboardingNext() {
+    setFlow("onboarding2");
+  }
+
+  // Handler to move from the second Onboarding screen to the call setup
+  function onOnboarding2Next() {
     setFlow("enter");
   }
 
-  // EnterFakeCall -> schedule
-  // Receives (timeLabel, name)
+  // Handler to schedule the call from the EnterFakeCall component
   function onSchedule(timeLabel, name) {
-    // Convert label like "5 secs", "1 min" -> seconds
     const parse = (label) => {
       if (!label) return 5;
       const [val, unit] = label.split(" ");
@@ -47,42 +60,33 @@ export default function App() {
     setFlow("count");
   }
 
-  // Countdown finished or skip
+  // Handler for when the countdown finishes
   function onCountdownFinish() {
     setFlow("call");
   }
 
-  // FakeCallWindow ended: receives durationSeconds
+  // Handler for when the call ends
   function onCallEnd(durationSeconds) {
     setLastCallDuration(durationSeconds || 0);
     setFlow("ended");
   }
 
-  // From CallEnded -> start new flow
+  // Handler to start a new call from the end screen
   function onStartNewCall() {
     setFlow("enter");
   }
 
-  // Helper to navigate direct to deep link for a caller (optional UI usage)
-  function openDeepLinkForCaller(name) {
-    // encode name for URL
-    const encoded = encodeURIComponent(name || "Dad");
-    navigate(`/call/${encoded}`);
-  }
-
-  // The default SPA behavior (old flow) is preserved.
-  // We'll also declare Routes so that direct visits to /call/:callerName work.
   return (
     <Routes>
-      {/* Root route renders the SPA flow UI (same as before) */}
+      {/* The main route that controls the application flow */}
       <Route
         path="/"
         element={
           <div className="app-root">
             {flow === "splash" && <SplashScreen onTimeout={onSplashTimeout} />}
-
-            {flow === "enter" && <EnterFakeCall onSchedule={(timeLabel, name) => { onSchedule(timeLabel, name); /* optional: we could also direct to deep link here */ }} />}
-
+            {flow === "onboarding" && <OnboardingScreen onNext={onOnboardingNext} />}
+            {flow === "onboarding2" && <OnboardingScreen2 onNext={onOnboarding2Next} />}
+            {flow === "enter" && <EnterFakeCall onSchedule={onSchedule} />}
             {flow === "count" && (
               <Countdown
                 countdownFrom={scheduledSecs}
@@ -90,54 +94,49 @@ export default function App() {
                 onSkip={onCountdownFinish}
               />
             )}
-
             {flow === "call" && (
               <FakeCallWindow
                 callerName={callerName}
                 agentId={AGENT_ID}
-                autoStart={true}
                 onEndCall={onCallEnd}
               />
             )}
-
             {flow === "ended" && <CallEndedBackground duration={lastCallDuration} onNewCall={onStartNewCall} />}
           </div>
         }
       />
 
-      {/* Deep link route: direct visit to /call/:callerName */}
+      {/* A deep-link route to directly start a call (optional) */}
       <Route
         path="/call/:callerName"
-        element={<FakeCallWindow agentId={AGENT_ID} autoStart={true} onEndCall={onCallEnd} />}
+        element={<FakeCallWindow agentId={AGENT_ID} onEndCall={onCallEnd} />}
       />
 
-      {/* Fallback: render root flow for anything else */}
+      {/* Fallback route to prevent errors */}
       <Route path="*" element={
-        <div className="app-root">
-          {flow === "splash" && <SplashScreen onTimeout={onSplashTimeout} />}
-
-          {flow === "enter" && <EnterFakeCall onSchedule={(timeLabel, name) => onSchedule(timeLabel, name)} />}
-
-          {flow === "count" && (
-            <Countdown
-              countdownFrom={scheduledSecs}
-              onFinish={onCountdownFinish}
-              onSkip={onCountdownFinish}
-            />
-          )}
-
-          {flow === "call" && (
-            <FakeCallWindow
-              callerName={callerName}
-              agentId={AGENT_ID}
-              autoStart={true}
-              onEndCall={onCallEnd}
-            />
-          )}
-
-          {flow === "ended" && <CallEndedBackground duration={lastCallDuration} onNewCall={onStartNewCall} />}
-        </div>
+         <div className="app-root">
+            {flow === "splash" && <SplashScreen onTimeout={onSplashTimeout} />}
+            {flow === "onboarding" && <OnboardingScreen onNext={onOnboardingNext} />}
+            {flow === "onboarding2" && <OnboardingScreen2 onNext={onOnboarding2Next} />}
+            {flow === "enter" && <EnterFakeCall onSchedule={onSchedule} />}
+            {flow === "count" && (
+              <Countdown
+                countdownFrom={scheduledSecs}
+                onFinish={onCountdownFinish}
+                onSkip={onCountdownFinish}
+              />
+            )}
+            {flow === "call" && (
+              <FakeCallWindow
+                callerName={callerName}
+                agentId={AGENT_ID}
+                onEndCall={onCallEnd}
+              />
+            )}
+            {flow === "ended" && <CallEndedBackground duration={lastCallDuration} onNewCall={onStartNewCall} />}
+          </div>
       } />
     </Routes>
   );
 }
+

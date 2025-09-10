@@ -1,0 +1,118 @@
+/* General body styling to maintain consistency */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+/* Main container for the onboarding screen */
+.onboarding-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  max-width: 400px; /* Standard mobile screen width */
+  margin: 0 auto;
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+/* Header section with logo and title */
+.onboarding-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 1rem;
+  margin-bottom: 2rem;
+  flex-shrink: 0;
+}
+
+.onboarding-header .header-logo {
+  width: 35px;
+  height: auto;
+}
+
+.onboarding-header .header-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #D6334B; /* Consistent brand color */
+}
+
+/* Main content area with illustration and text */
+.onboarding-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
+.onboarding-illustration {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  object-fit: cover;
+}
+
+.onboarding-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1rem 0;
+  padding: 0 1rem;
+  max-width: 350px;
+}
+
+.onboarding-description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 1rem;
+  max-width: 350px;
+}
+
+/* Footer section with the 'Next' button */
+.onboarding-footer {
+  width: 100%;
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.next-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: #ED818F;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+  text-align: center;
+}
+
+.next-btn:hover {
+  background-color: #D6334B; /* Darker shade on hover */
+}
+
+.next-btn .page-indicator {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 400;
+  font-size: 16px;
+}

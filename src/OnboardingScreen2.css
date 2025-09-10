@@ -1,0 +1,109 @@
+/* Reusing some styles from the first onboarding screen for consistency */
+.onboarding-container-2 {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+.onboarding-header-2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 1rem;
+  margin-bottom: 2rem; /* Reduced from 2.5rem */
+  flex-shrink: 0;
+}
+
+.onboarding-header-2 .header-logo {
+  width: 35px;
+  height: auto;
+}
+
+.onboarding-header-2 .header-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #D6334B;
+}
+
+/* Main content area for the second screen */
+.onboarding-main-2 {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align text to the left */
+  text-align: left;
+  overflow-y: hidden; /* Changed from auto to prevent scrolling */
+  width: 100%;
+}
+
+.info-section {
+  margin-bottom: 1.2rem; /* Reduced from 1.5rem */
+}
+
+.info-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 20px; /* Reduced from 22px */
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.4rem 0;
+}
+
+.section-text {
+  font-size: 15px; /* Reduced from 16px */
+  color: #555;
+  line-height: 1.5; /* Reduced from 1.6 */
+  margin: 0;
+}
+
+.section-text strong {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Footer section with the 'Next' button */
+.onboarding-footer-2 {
+  width: 100%;
+  padding-top: 1rem; /* Reduced from 1.5rem */
+  padding-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+/* Reusing button styles */
+.onboarding-footer-2 .next-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: #ED818F;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+  text-align: center;
+}
+
+.onboarding-footer-2 .next-btn:hover {
+  background-color: #D6334B;
+}
+
+.onboarding-footer-2 .next-btn .page-indicator {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 400;
+  font-size: 16px;
+}
+
